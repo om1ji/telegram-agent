@@ -33,7 +33,7 @@ class ServiceCategoryViewSet(viewsets.ModelViewSet):
     """
     queryset = ServiceCategory.objects.all()
     serializer_class = ServiceCategorySerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     filter_backends = [filters.SearchFilter]
     search_fields = ['name']
 
@@ -62,7 +62,7 @@ class SpecialistViewSet(viewsets.ModelViewSet):
     """
     queryset = Specialist.objects.filter(is_active=True)
     serializer_class = SpecialistSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['name', 'specialization', 'city']
     ordering_fields = ['name', 'specialization', 'city']
@@ -186,7 +186,7 @@ class SpecialistScheduleViewSet(viewsets.ModelViewSet):
     """
     queryset = SpecialistSchedule.objects.all()
     serializer_class = SpecialistScheduleSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     filter_backends = [filters.SearchFilter]
     
     def get_queryset(self):
@@ -210,7 +210,7 @@ class ServiceViewSet(viewsets.ModelViewSet):
     """
     queryset = Service.objects.filter(is_active=True)
     serializer_class = ServiceSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['name', 'specialist__name', 'category__name']
     ordering_fields = ['name', 'price', 'duration']
@@ -241,7 +241,7 @@ class ClientViewSet(viewsets.ModelViewSet):
     """
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     filter_backends = [filters.SearchFilter]
     search_fields = ['name', 'phone', 'email', 'city']
     
@@ -286,7 +286,7 @@ class AppointmentViewSet(viewsets.ModelViewSet):
     """
     queryset = Appointment.objects.all()
     serializer_class = AppointmentSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['client__name', 'specialist__name', 'service__name']
     ordering_fields = ['date', 'start_time', 'status']
