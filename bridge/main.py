@@ -1,37 +1,44 @@
-import asyncio
 from dotenv import load_dotenv
 from langchain_ollama import ChatOllama
+from langchain_core.messages.ai import AIMessage
 from mcp_use import MCPAgent, MCPClient
+import os
+import re
 
-async def main():
-    # Load environment variables
-    load_dotenv()
+load_dotenv()
 
-    # Create configuration dictionary
-    config = {
+OLLAMA_URL = os.getenv("OLLAMA_URL")
+
+CONFIG = {
       "mcpServers": {
-        "Healthcare Booking Assistant": {
-            "command": "/Users/om1ji/.local/bin/uv",
-            "args": [
-                "run",
-                "--with",
-                "mcp[cli]",
-                "mcp",
-                "run",
-                "/Users/om1ji/Documents/KFU/\u041a\u0443\u0440\u0441\u043e\u0432\u0430\u044f_\u0440\u0430\u0431\u043e\u0442\u0430/mcp-server/main.py"
-            ]
-            }
+        # "Healthcare Booking Assistant": {
+        #     "command": "/Users/om1ji/.local/bin/uv",
+        #     "args": [
+        #         "run",
+        #         "--with",
+        #         "mcp[cli]",
+        #         "mcp",
+        #         "run",
+        #         "/Users/om1ji/Documents/KFU/\u041a\u0443\u0440\u0441\u043e\u0432\u0430\u044f_\u0440\u0430\u0431\u043e\u0442\u0430/mcp-server/main.py"
+        #     ]
+        #     }
       }
     }
 
-    client = MCPClient.from_dict(config)
-    llm = ChatOllama(model="qwen3:14b")
-    agent = MCPAgent(llm=llm, client=client, max_steps=30)
+SYSTEM_PROMPT = """Use /nothink for every user prompt.
+"""
 
-    result = await agent.run(
-        "Какие специалисты есть у нас в Казани и как их зовут?",
-    )
-    print(f"\nResult: {result}")
+client = MCPClient.from_dict(CONFIG)
+llm = ChatOllama(model="qwen3:4b", base_url=OLLAMA_URL)
+agent = MCPAgent(llm=llm, client=client, max_steps=30, system_prompt=SYSTEM_PROMPT)
 
-if __name__ == "__main__":
-    asyncio.run(main())
+def parse_result(result: str) -> str:
+    pattern = r"<think>.*?</think>"
+    cleaned_text = re.sub(pattern, "", result, flags=re.DOTALL)
+    return cleaned_text.strip()
+
+
+async def ask(message: str) -> str:
+    content = await agent.run(message)
+    result = AIMessage(content)
+    return parse_result(result.content)

@@ -3,3 +3,5 @@ __pycache__
 weather
 .DS_Store
 ollama-gui/
+.env
+.sqlite3
