@@ -25,9 +25,9 @@ class ServiceAdmin(admin.ModelAdmin):
 
 @admin.register(Client)
 class ClientAdmin(admin.ModelAdmin):
-    list_display = ('name', 'phone', 'email', 'city')
+    list_display = ('name', 'phone', 'email', 'city', 'telegram_id')
     list_filter = ('city',)
-    search_fields = ('name', 'phone', 'email', 'city')
+    search_fields = ('name', 'phone', 'email', 'city', 'telegram_id')
 
 @admin.register(Appointment)
 class AppointmentAdmin(admin.ModelAdmin):

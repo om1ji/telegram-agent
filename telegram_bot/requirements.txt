@@ -1,0 +1,7 @@
+aiogram
+langchain-ollama
+langchain-core
+mcp-use
+python-dotenv
+mcp[cli]
+httpx

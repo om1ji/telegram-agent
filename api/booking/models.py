@@ -64,6 +64,7 @@ class Client(models.Model):
     phone = models.CharField(max_length=20)
     email = models.EmailField(blank=True)
     city = models.CharField(max_length=100, default="Казань")
+    telegram_id = models.CharField(max_length=20, default="")
     
     def __str__(self):
         return self.name

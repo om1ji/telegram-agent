@@ -1,0 +1,26 @@
+name: coursework-project
+
+services:
+  api:
+    env_file:
+      - .env
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    expose:
+      - "8000"
+    volumes:
+      - ./api:/app
+
+  telegram-bot:
+    env_file:
+      - .env
+    build:
+      context: ./telegram_bot
+      dockerfile: Dockerfile
+    expose:
+      - "8001"
+    volumes:
+      - ./telegram_bot:/app
+    depends_on:
+      - api

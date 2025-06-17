@@ -2,24 +2,20 @@
 from datetime import datetime
 import httpx
 from mcp.server.fastmcp import FastMCP
+from asyncio import run
 
-# Конфигурация API
-API_BASE_URL = "http://localhost:8000/api"  # URL вашего Django REST API
-AUTH_TOKEN = "your_auth_token_here"  # Токен аутентификации для Django REST API
-MCP_BASE_URL = "http://localhost:8080"  # Базовый URL для MCP ресурсов
+API_BASE_URL = "http://localhost:8000/api"
+AUTH_TOKEN = "your_auth_token_here"
+MCP_BASE_URL = "http://localhost:8080"
 
-# Заголовки для запросов к API
 DEFAULT_HEADERS = {
     "Authorization": f"Token {AUTH_TOKEN}",
     "Content-Type": "application/json",
 }
 
-# Создание MCP сервера
 mcp = FastMCP("Healthcare Booking Assistant")
 
-# Вспомогательные функции для работы с API
 async def api_get(endpoint, params=None):
-    """Выполнить GET-запрос к API"""
     url = f"{API_BASE_URL}/{endpoint}/"
     async with httpx.AsyncClient() as client:
         response = await client.get(url, params=params, headers=DEFAULT_HEADERS)
@@ -27,7 +23,6 @@ async def api_get(endpoint, params=None):
         return response.json()
 
 async def api_post(endpoint, data):
-    """Выполнить POST-запрос к API"""
     url = f"{API_BASE_URL}/{endpoint}/"
     async with httpx.AsyncClient() as client:
         response = await client.post(url, json=data, headers=DEFAULT_HEADERS)
@@ -35,7 +30,6 @@ async def api_post(endpoint, data):
         return response.json()
 
 async def api_patch(endpoint, data):
-    """Выполнить PATCH-запрос к API"""
     url = f"{API_BASE_URL}/{endpoint}/"
     async with httpx.AsyncClient() as client:
         response = await client.patch(url, json=data, headers=DEFAULT_HEADERS)
@@ -43,14 +37,11 @@ async def api_patch(endpoint, data):
         return response.json()
 
 async def api_delete(endpoint):
-    """Выполнить DELETE-запрос к API"""
     url = f"{API_BASE_URL}/{endpoint}/"
     async with httpx.AsyncClient() as client:
         response = await client.delete(url, headers=DEFAULT_HEADERS)
         response.raise_for_status()
         return response.status_code
-
-# === TOOLS ===
 
 @mcp.tool()
 async def search_specialists(specialization: str = None, city: str = None, category_id: int = None) -> list:
@@ -274,7 +265,4 @@ async def get_client(client_id: int) -> dict:
     return await api_get(f"clients/{client_id}")
 
 if __name__ == "__main__":
-    print("Starting Healthcare Booking MCP Server...")
-    # mcp.run(transport="stdio")
-    import asyncio
-    asyncio.run(mcp.run_stdio_async())
+    run(mcp.run_stdio_async())
