@@ -30,7 +30,7 @@ CONFIG = {
     }
 
 SYSTEM_PROMPT = """
-Use /nothink for every user prompt.
+Ты администратор медицинского центра. Тебе доступны инструменты MCP. Отвечай только на вопросы, связанные с медицинским центром и записями к специалистам.
 """
 
 client = MCPClient.from_dict(CONFIG)
@@ -45,9 +45,10 @@ def parse_result(result: str) -> str:
     cleaned_text = re.sub(pattern, "", result, flags=re.DOTALL)
     return cleaned_text.strip()
 
-
-async def ask(message: str) -> str:
-    content = await agent.run(message)
+async def ask(message: Message) -> str:
+    identifier = f"Пользователь с айди: {message.from_user.id} спрашивает у тебя:"
+    message_text = identifier + "\n" + message.text
+    content = await agent.run(message_text)
     result = AIMessage(content)
     return parse_result(result.content)
 
@@ -60,7 +61,7 @@ async def ask_llm(message: Message):
     message_text = message.text
     await bot.send_chat_action(message.chat.id, "typing")
     print(message_text)
-    response = await ask(message_text)
+    response = await ask(message)
     await message.answer(response, parse_mode="HTML")
     
 async def main():
